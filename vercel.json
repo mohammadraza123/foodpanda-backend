@@ -1,0 +1,10 @@
+{
+    "version": 2,
+    "builds": [
+      { "src": "Express/APIS/GET.js", "use": "@vercel/node" }
+    ],
+    "routes": [
+      { "src": "/api/restaurants", "dest": "Express/APIS/GET.js" }
+    ]
+  }
+  
