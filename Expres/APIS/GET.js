@@ -16,8 +16,6 @@ app.get("/restaurants", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-// app.listen(2000, () => {
-//   console.log("server is running on porrt 2000");
-// });
-
-module.exports = app;
+app.listen(2000, () => {
+  console.log("server is running on porrt 2000");
+});
