@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const path = require("path");
 const connectdb = require("./Expres/db/dbConnection"); // Keeping your correct path
 const restaurantRoutes = require("./Expres/APIS/GET"); // Keeping your correct path
 
@@ -11,7 +12,9 @@ connectdb();
 // Middleware
 app.use(express.json());
 app.use(cors());
-app.use("/uploads", express.static("uploads"));
+
+// Serve static files properly
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Use Routes
 app.use("/api", restaurantRoutes);
