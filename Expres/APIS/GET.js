@@ -19,11 +19,11 @@
 // app.listen(2000, () => {
 //   console.log("server is running on porrt 2000");
 // });
-// Expres/APIS/GET.js
 const express = require("express");
-const restaurantModal = require("../Models/restaurantSchema");
 const router = express.Router();
+const restaurantModal = require("../Models/restaurantSchema");
 
+// GET request to fetch restaurant data
 router.get("/restaurants", async (req, res) => {
   try {
     const restaurants = await restaurantModal.find();
@@ -34,4 +34,5 @@ router.get("/restaurants", async (req, res) => {
   }
 });
 
+// Export routes instead of running a server
 module.exports = router;
