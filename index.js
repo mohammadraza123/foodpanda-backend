@@ -1,7 +1,7 @@
 // console.log('This is index.js file')
 const express = require("express");
 const cors = require("cors");
-const connectdb = require("./db/dbConnection");
+const connectdb = require("./Expres/db/dbConnection");
 const restaurantRoutes = require("./Expres/APIS/GET");
 
 const app = express();
