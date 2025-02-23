@@ -1,28 +1,19 @@
 const express = require("express");
-const cors = require("cors");
-const path = require("path");
-const connectdb = require("./Expres/db/dbConnection"); // Keeping your correct path
-const restaurantRoutes = require("./Expres/APIS/GET"); // Keeping your correct path
+const connectdb = require("./Expres/db/dbConnection");
+const restaurantRoutes = require("./Routes/restaurants");
 
 const app = express();
-
-// Connect to MongoDB
 connectdb();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+app.use("/uploads", express.static("public/uploads"));
 
-// Serve static files properly
-app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
+// Routes
+app.use(restaurantRoutes);
 
-// Use Routes
-app.use("/api", restaurantRoutes);
-
-// Default Route (Fixes "Cannot GET /" error)
 app.get("/", (req, res) => {
-  res.send("Welcome to the FoodPanda Backend API!");
+  res.send("Welcome to the Foodpanda backend");
 });
 
-// Export app for Vercel (No app.listen)
-module.exports = app;
+app.listen(2000, () => {
+  console.log(`running on 2000`);
+});

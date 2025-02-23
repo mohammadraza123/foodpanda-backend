@@ -1,17 +1,20 @@
+// POST data with image to Mongodb
+
 const express = require("express");
 const multer = require("multer");
-const connectdb = require("../db/dbConnection");
-const restaurantModal = require("../Models/restaurantSchema");
+const router = express.Router();
+const connectdb = require("../Expres/db/dbConnection");
+const restaurantModal = require("../Expres/Models/restaurantSchema");
 const path = require("path"); // Import path module
-
 
 const app = express();
 connectdb();
 
 app.use(express.json());
-// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use("/uploads", express.static(path.join(__dirname, "../../public/uploads")));
-
+app.use(
+  "/uploads",
+  express.static(path.join(__dirname, "../../public/uploads"))
+);
 
 const fileUplaod = multer({
   storage: multer.diskStorage({
@@ -26,7 +29,7 @@ const fileUplaod = multer({
   }),
 }).single("my_file");
 
-app.post("/restaurants", fileUplaod, async (req, res) => {
+router.post("/restaurants", fileUplaod, async (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).send("No files Uploaded");
@@ -51,6 +54,17 @@ app.post("/restaurants", fileUplaod, async (req, res) => {
   }
 });
 
-app.listen(2000, () => {
-  console.log("server is running on port 2000");
+// GET data from Mongodb
+
+router.get("/restaurants", async (req, res) => {
+  try {
+    const restaurants = await restaurantModal.find();
+    res.json(restaurants);
+  } catch (error) {
+    console.log("Error fetching Data", error);
+    res.status(500).send("Server Error");
+  }
 });
+
+// Export routes instead of running a server
+module.exports = router;
