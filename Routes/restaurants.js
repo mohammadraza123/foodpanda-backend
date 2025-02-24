@@ -1,49 +1,42 @@
 // POST data with image to Mongodb
 
 const express = require("express");
-const multer = require("multer");
 const router = express.Router();
 const connectdb = require("../Expres/db/dbConnection");
 const restaurantModal = require("../Expres/Models/restaurantSchema");
-const path = require("path"); // Import path module
+const cloudinary = require("cloudinary").v2;
+
+cloudinary.config({
+  cloud_name: "drnt08bj6",
+  api_key: "521449492941734",
+  api_secret: "HpJK4Ay5fzxYV6ZTZ3i1tWAv4yM",
+});
 
 const app = express();
 connectdb();
 
 app.use(express.json());
-app.use(
-  "/uploads",
-  express.static(path.join(__dirname, "../../public/uploads"))
-);
 
-const fileUplaod = multer({
-  storage: multer.diskStorage({
-    destination: function (req, file, callback) {
-      const uploadPath = path.join(__dirname, "../../public/uploads"); // Go up two levels to reach the main directory
-      callback(null, uploadPath);
-    },
-    filename: function (req, file, callback) {
-      const uniqueName = file.fieldname + "-" + Date.now() + ".jpg";
-      callback(null, uniqueName);
-    },
-  }),
-}).single("my_file");
-
-router.post("/restaurants", fileUplaod, async (req, res) => {
+router.post("/restaurants", async (req, res) => {
   try {
-    if (!req.file) {
-      return res.status(400).send("No files Uploaded");
+    if (!req.files) {
+      return res.status(400).json({ error: "Image is required" });
+    }
+    const file = req.files.photo;
+    const result = await cloudinary.uploader.upload(file.tempFilePath);
+    console.log(result);
+
+    const { title, rating, city } = req.body;
+
+    if (!title || !rating || !city) {
+      return res.status(400).send("Please fill all the fields");
     }
 
-    const { title, rating } = req.body;
-
-    if (!title || !rating) {
-      return res.status(400).send("Title and rating are required");
-    }
     const newRestaurant = new restaurantModal({
       title,
       rating,
-      imagePath: `/uploads/${req.file.filename}`,
+      city,
+      imagePath: result.secure_url,
     });
 
     const restaurant = await newRestaurant.save();
@@ -59,12 +52,29 @@ router.post("/restaurants", fileUplaod, async (req, res) => {
 router.get("/restaurants", async (req, res) => {
   try {
     const restaurants = await restaurantModal.find();
+
+    if (restaurants.length === 0) {
+      return res.status(404).json({ message: "No data found" });
+    }
     res.json(restaurants);
   } catch (error) {
     console.log("Error fetching Data", error);
     res.status(500).send("Server Error");
   }
 });
+
+router.get("/restaurants/:id", async (req,res)=>{
+  try {
+    const employee = await restaurantModal.findById(req.params.id)
+    if(!employee){
+      return res.status(404).json({ error: "Image is required" });
+    }
+    res.json(employee)
+  } catch (error) {
+    console.log("Error fetching Data", error);
+    res.status(500).send("Server Error");
+  }
+})
 
 // Export routes instead of running a server
 module.exports = router;
