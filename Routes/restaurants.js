@@ -24,7 +24,6 @@ router.post("/restaurants", async (req, res) => {
     }
     const file = req.files.photo;
     const result = await cloudinary.uploader.upload(file.tempFilePath);
-    console.log(result);
 
     const { title, rating, city } = req.body;
 
@@ -47,7 +46,7 @@ router.post("/restaurants", async (req, res) => {
   }
 });
 
-// GET data from Mongodb
+// GET all data from Mongodb
 
 router.get("/restaurants", async (req, res) => {
   try {
@@ -63,18 +62,20 @@ router.get("/restaurants", async (req, res) => {
   }
 });
 
-router.get("/restaurants/:id", async (req,res)=>{
+
+// GET specific data from Mongodb (city endpoint)
+
+router.get("/restaurants/:id", async (req, res) => {
   try {
-    const employee = await restaurantModal.findById(req.params.id)
-    if(!employee){
+    const employee = await restaurantModal.findById(req.params.id);
+    if (!employee) {
       return res.status(404).json({ error: "Image is required" });
     }
-    res.json(employee)
+    res.json(employee);
   } catch (error) {
     console.log("Error fetching Data", error);
     res.status(500).send("Server Error");
   }
-})
+});
 
-// Export routes instead of running a server
 module.exports = router;
