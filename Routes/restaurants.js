@@ -62,16 +62,16 @@ router.get("/restaurants", async (req, res) => {
   }
 });
 
-
 // GET specific data from Mongodb (city endpoint)
 
-router.get("/restaurants/:id", async (req, res) => {
+router.get("/restaurants/:city", async (req, res) => {
   try {
-    const employee = await restaurantModal.findById(req.params.id);
-    if (!employee) {
-      return res.status(404).json({ error: "Image is required" });
+    const cityName = req.params.city.toLowerCase();
+    const restaurant = await restaurantModal.find({ city: cityName });
+    if (!restaurant) {
+      return res.status(404).json({ error: "No data found about city" });
     }
-    res.json(employee);
+    res.json(restaurant);
   } catch (error) {
     console.log("Error fetching Data", error);
     res.status(500).send("Server Error");
