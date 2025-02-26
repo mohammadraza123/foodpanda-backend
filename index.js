@@ -7,6 +7,8 @@ const cors = require("cors");
 
 const app = express();
 connectdb();
+app.use(cors()); // 🔥 Enable CORS for all domains
+
 
 app.use(
   fileUpload({
@@ -16,7 +18,6 @@ app.use(
 
 // Routes
 app.use(restaurantRoutes);
-app.use(cors()); // 🔥 Enable CORS for all domains
 
 
 app.get("/", (req, res) => {
